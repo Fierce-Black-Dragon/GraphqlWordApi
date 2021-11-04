@@ -53,6 +53,7 @@ app.use(
 
           type RootQuery {
               words: [Word!]!
+              word(wordId:ID!): Word!
           }
           type RootMutation {
              createWord(wordInput:WordInput):Word
@@ -70,6 +71,16 @@ app.use(
             return words.map((word) => {
               return { ...word._doc, _id: word.id };
             });
+          })
+          .catch((err) => {
+            throw err;
+          });
+      },
+      word: (args) => {
+        return wordSchema
+          .findById(args.wordId)
+          .then((word) => {
+            return word;
           })
           .catch((err) => {
             throw err;
