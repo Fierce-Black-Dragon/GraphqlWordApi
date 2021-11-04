@@ -10,7 +10,6 @@ import wordSchema from "./models/word.js";
 
 dotenv.config();
 const app = express();
-const Words = [];
 
 app.use(bodyParser.json());
 const PORT = process.env.PORT || 5000;
@@ -65,10 +64,16 @@ app.use(
       `),
     rootValue: {
       words: () => {
-        return Words;
-        // {
-
-        // },
+        return wordSchema
+          .find()
+          .then((words) => {
+            return words.map((word) => {
+              return { ...word._doc, _id: word.id };
+            });
+          })
+          .catch((err) => {
+            throw err;
+          });
       },
       createWord: async (args) => {
         const apiresult = await axios.get(
