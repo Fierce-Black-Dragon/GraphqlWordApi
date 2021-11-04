@@ -70,12 +70,17 @@ app.use(
         // },
       },
       createWord: async (args) => {
+        console.log(
+          process.env.MONGODB_NAME,
+          process.env.API_ID,
+          process.env.APi_KEY
+        );
         const apiresult = await axios.get(
           `https://od-api.oxforddictionaries.com/api/v2/entries/en-gb/${args.wordInput.wordName}?strictMatch=true`,
           {
             headers: {
-              app_id: process.env.APP_ID,
-              app_key: process.env.APP_KEY,
+              app_id: process.env.API_ID,
+              app_key: process.env.API_KEY,
             },
           }
         );
