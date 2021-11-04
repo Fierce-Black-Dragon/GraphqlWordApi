@@ -6,6 +6,7 @@ import axios from "axios";
 import bodyParser from "body-parser";
 import { graphql, buildSchema } from "graphql";
 import mongoose from "mongoose";
+import wordSchema from "./models/word.js";
 
 dotenv.config();
 const app = express();
@@ -70,11 +71,6 @@ app.use(
         // },
       },
       createWord: async (args) => {
-        console.log(
-          process.env.MONGODB_NAME,
-          process.env.API_ID,
-          process.env.APi_KEY
-        );
         const apiresult = await axios.get(
           `https://od-api.oxforddictionaries.com/api/v2/entries/en-gb/${args.wordInput.wordName}?strictMatch=true`,
           {
@@ -93,8 +89,7 @@ app.use(
             (p) => p.text
           );
 
-        const word = {
-          _id: Math.random().toString(),
+        const word = new wordSchema({
           wordName: args.wordInput.wordName,
           definition:
             apiresult.data?.results[0]?.lexicalEntries[0]?.entries[0]?.senses[0]
@@ -104,10 +99,17 @@ app.use(
             apiresult.data?.results[0]?.lexicalEntries[0]?.lexicalCategory
               ?.text,
           synonyms: resultSynonyms,
-        };
-
-        Words.push(word);
-
+        });
+        await word
+          .save()
+          .then((result) => {
+            console.log(result);
+            return { ...result._doc, _id: result._doc._id.toString() };
+          })
+          .catch((err) => {
+            console.log(err);
+            throw err;
+          });
         return word;
       },
     },

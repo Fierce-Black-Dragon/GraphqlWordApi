@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const WordSchema = new mongoose.Schema(
   {
     wordName: { type: String, required: true },
-    email: { type: String, required: true },
     definition: { type: String, required: true },
     examples: { type: String, required: true },
     synonyms: [{ type: String }],
