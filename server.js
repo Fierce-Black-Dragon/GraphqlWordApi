@@ -43,3 +43,6 @@ app.use(
     graphiql: true,
   })
 );
+app.get("/", (req, res) => {
+  res.send("hello  server is running :)");
+});
