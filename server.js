@@ -15,9 +15,11 @@ const app = express();
 
 app.use(bodyParser.json());
 const PORT = process.env.PORT || 5000;
+// to resolve cross origin error
 app.use(cors());
 const dbURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gqyqk.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`;
 
+// databse connection
 const db = mongoose
   .connect(dbURL, {
     useNewUrlParser: true,
@@ -34,7 +36,7 @@ const db = mongoose
   .catch((err) => {
     console.log(err);
   });
-
+// graphql api
 app.use(
   "/graphql",
   graphqlHTTP({

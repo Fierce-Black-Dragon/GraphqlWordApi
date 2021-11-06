@@ -1,6 +1,8 @@
 import wordSchema from "../../models/word.js";
 import axios from "axios";
+
 const rootReslover = {
+  // fetching all words from the database
   words: () => {
     return wordSchema
       .find()
@@ -14,6 +16,7 @@ const rootReslover = {
       });
   },
   word: (args) => {
+    // fetching  word by id from the database
     return wordSchema
       .findById(args.wordId)
       .then((word) => {
@@ -23,14 +26,16 @@ const rootReslover = {
         throw err;
       });
   },
+
   createWord: async (args) => {
     const foundWord = await wordSchema.findOne({
       wordName: args.wordInput.wordName.toLowerCase(),
     });
-
+    // to find if the word is already in the database
     if (foundWord) {
       throw new Error("Word already exists");
     } else {
+      // to get the word  details from the  oxford API
       const apiresult = await axios.get(
         `https://od-api.oxforddictionaries.com/api/v2/entries/en-gb/${args.wordInput.wordName.toLowerCase()}?strictMatch=true`,
         {
@@ -48,7 +53,7 @@ const rootReslover = {
         apiresult.data?.results[0]?.lexicalEntries[0]?.entries[0]?.senses[1]?.synonyms?.map(
           (p) => p.text
         );
-
+      // saving the word in the database
       const word = new wordSchema({
         wordName: args.wordInput.wordName.toLowerCase(),
         definition:
